@@ -43,6 +43,14 @@ tsParticles.load("tsparticles", {
     }
 });
 
+// curtain-intro.js
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        document.getElementById("curtain").classList.add("open");
+    }, 1000); // wait 2s before opening
+});
+
+
 // Hero fade-in
 gsap.from(".hero-content", { duration: 1.5, opacity: 0, y: 50 });
 
