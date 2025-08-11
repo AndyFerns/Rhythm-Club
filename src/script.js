@@ -6,7 +6,16 @@ tsParticles.load("tsparticles", {
     particles: {
         number: { value: 60, density: { enable: true, area: 800 } },
         color: { value: "#a89ff2" },
-        shape: { type: "circle" },
+        shape: { 
+            type: "character",
+            character: {
+                value: ["♪", "♫", "♬", "𝄞"],
+                font: "Poppins",
+                style: "",
+                weight: "400",
+                fill: true
+            } 
+        },
         opacity: { value: 0.5 },
         size: { value: 3 },
         move: { enable: true, speed: 1 },
