@@ -4,6 +4,18 @@
     box-sizing: border-box;
 }
 
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vmin; height: 80vmin; /* scales with viewport, keeps aspect ratio */
+    background: url("/images/rhythmLogo-removebg-preview.png") center/contain no-repeat;
+    opacity: 0.55; /* faint watermark */
+    z-index: -4; /* behind particles */
+    pointer-events: none;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(120deg, #0d1b4a, #5e4b8b);
