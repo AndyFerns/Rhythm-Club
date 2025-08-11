@@ -9,7 +9,7 @@ tsParticles.load("tsparticles", {
         shape: { 
             type: "character",
             character: {
-                value: ["♪", "♫", "♬", "𝄞"],
+                value: ["♪", "♫", "♬", "𝄞", "♩", "♭", "♯", "♮", "𝅘𝅥𝅯", ""],
                 font: "Poppins",
                 style: "",
                 weight: "400",
@@ -17,9 +17,10 @@ tsParticles.load("tsparticles", {
             } 
         },
         opacity: { value: 0.5 },
-        size: { value: 3 },
+        size: { value: 20, random: { enable: true, minimumValue: 15 }},
         move: { enable: true, speed: 1 },
-        links: { enable: true, color: "#a89ff2", opacity: 0.4, distance: 150 }
+        // links: { enable: true, color: "#a89ff2", opacity: 0.4, distance: 150 }
+        links: {enable: false}
     },
     interactivity: {
         events: { 
