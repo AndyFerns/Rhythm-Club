@@ -43,6 +43,40 @@ tsParticles.load("tsparticles", {
     }
 });
 
+// audio-reactive-particles
+const audio = document.getElementById("bgMusic");
+audio.volume = 0.3; // softer by default
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioCtx.createAnalyser();
+const source = audioCtx.createMediaElementSource(audio);
+
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+analyser.fftSize = 256;
+
+const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+// Animate particles based on audio
+function updateParticlesFromAudio() {
+    analyser.getByteFrequencyData(dataArray);
+    const bass = dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10; // low frequencies
+    const intensity = bass / 255;
+
+    tsParticles.domItem(0).particles.setSpeed(1 + intensity * 5);
+    tsParticles.domItem(0).particles.setOpacity(0.5 + intensity * 0.5);
+
+    requestAnimationFrame(updateParticlesFromAudio);
+}
+
+// Start audio processing
+audio.addEventListener("play", () => {
+    audioCtx.resume().then(() => {
+        updateParticlesFromAudio();
+    });
+});
+
+
 // curtain-intro.js
 window.addEventListener("load", () => {
     setTimeout(() => {
