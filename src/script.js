@@ -9,7 +9,7 @@ tsParticles.load("tsparticles", {
         shape: { 
             type: "character",
             character: {
-                value: ["♪", "♫", "♬", "𝄞", "♩", "♭", "♯", "♮", "𝅘𝅥𝅯", ""],
+                value: ["♪", "♫", "♬", "𝄞", "♩", "♭", "♯", "♮", "𝅘𝅥𝅯", "𝅘𝅥𝅰"],
                 font: "Poppins",
                 style: "",
                 weight: "400",
