@@ -17,9 +17,15 @@
 <body>
     <!-- Curtain effect -->
     <div id="curtain">
-        <img src="/images/rhythmLogo.jpeg" alt="Rhythm Club Logo">
+        <div class="curtain-panel left"></div>
+        <div class="curtain-panel right"></div>
+        <div class="curtain-content">
+            <img src="/images/rhythmLogo.jpeg" class="curtain-logo" alt="Rhythm Club Logo">
+            <!-- <button id="startMusicBtn">Enter</button> -->
+        </div>
     </div>
-    
+
+
     <!-- lighting sweeping effect -->
     <div class="lighting-sweep"></div>
 
@@ -132,5 +138,6 @@
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
 
     <script src="js/script.js"></script>
+    <script src="js/audio.js"></script>
 </body>
 </html>
