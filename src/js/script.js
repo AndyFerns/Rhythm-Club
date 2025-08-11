@@ -1,12 +1,22 @@
+/* script.js
+   Responsibilities:
+   - Initialize tsParticles (musical-character particles + slow spin)
+   - Initialize GSAP / ScrollTrigger animations (hero, sections, team, cinematic parallax)
+   NOTE: Audio (play + analyser) and curtain logic moved to audio.js
+*/
+
+// Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger);
 
-// Particle Background
+/* -------------------------
+   tsParticles initialization
+   ------------------------- */
 tsParticles.load("tsparticles", {
     background: { color: "transparent" },
     particles: {
         number: { value: 60, density: { enable: true, area: 800 } },
         color: { value: "#a89ff2" },
-        shape: { 
+        shape: {
             type: "character",
             character: {
                 value: ["♪", "♫", "♬", "𝄞", "♩", "♭", "♯", "♮", "𝅘𝅥𝅯", "𝅘𝅥𝅰"],
@@ -14,10 +24,10 @@ tsParticles.load("tsparticles", {
                 style: "",
                 weight: "400",
                 fill: true
-            } 
+            }
         },
-        opacity: { value: 0.5 },
-        size: { value: 20, random: { enable: true, minimumValue: 15 }},
+        opacity: { value: 0.6 },
+        size: { value: 18, random: { enable: true, minimumValue: 12 } },
         rotate: {
             value: { min: 0, max: 360 },
             direction: "random",
@@ -28,62 +38,23 @@ tsParticles.load("tsparticles", {
             }
         },
         move: { enable: true, speed: 1 },
-        // links: { enable: true, color: "#a89ff2", opacity: 0.4, distance: 150 }
-        links: {enable: false}
+        links: { enable: false }
     },
     interactivity: {
-        events: { 
-            onHover: { enable: true, mode: "repulse" }, 
-            onClick: { enable: true, mode: "push" } 
+        events: {
+            onHover: { enable: true, mode: "repulse" },
+            onClick: { enable: true, mode: "push" }
         },
-        modes: { 
-            repulse: { distance: 40 }, 
-            push: { quantity: 4 } 
+        modes: {
+            repulse: { distance: 40 },
+            push: { quantity: 4 }
         }
     }
 });
 
-// audio-reactive-particles
-const audio = document.getElementById("bgMusic");
-audio.volume = 0.3; // softer by default
-
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
-
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
-analyser.fftSize = 256;
-
-const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-// Animate particles based on audio
-function updateParticlesFromAudio() {
-    analyser.getByteFrequencyData(dataArray);
-    const bass = dataArray.slice(0, 10).reduce((a, b) => a + b, 0) / 10; // low frequencies
-    const intensity = bass / 255;
-
-    tsParticles.domItem(0).particles.setSpeed(1 + intensity * 5);
-    tsParticles.domItem(0).particles.setOpacity(0.5 + intensity * 0.5);
-
-    requestAnimationFrame(updateParticlesFromAudio);
-}
-
-// Start audio processing
-audio.addEventListener("play", () => {
-    audioCtx.resume().then(() => {
-        updateParticlesFromAudio();
-    });
-});
-
-
-// curtain-intro.js
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        document.getElementById("curtain").classList.add("open");
-    }, 1000); // wait 2s before opening
-});
-
+/* -------------------------
+   GSAP Animations / ScrollTrigger
+   ------------------------- */
 
 // Hero fade-in
 gsap.from(".hero-content", { duration: 1.5, opacity: 0, y: 50 });
@@ -102,7 +73,7 @@ gsap.utils.toArray(".section").forEach(section => {
     });
 });
 
-// Team members stagger
+// Team members staggered reveal
 gsap.from(".team-member", {
     scrollTrigger: {
         trigger: ".team-grid",
@@ -111,15 +82,15 @@ gsap.from(".team-member", {
     y: 50,
     opacity: 0,
     duration: 0.5,
-    stagger: 0.2
+    stagger: 0.18
 });
 
-// Cinematic Parallax with fade
+// Cinematic parallax fade for background layers
 [".layer-back", ".layer-mid"].forEach(layer => {
     gsap.fromTo(layer,
         { opacity: 0, yPercent: 0 },
         {
-            opacity: 0.4,
+            opacity: 0.25,
             yPercent: layer.includes("back") ? -30 : -15,
             ease: "none",
             scrollTrigger: {
@@ -132,60 +103,10 @@ gsap.from(".team-member", {
     );
 });
 
-// THREE.JS Guitar Scene
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-let renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("guitarCanvas"), alpha: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-
-let light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(5, 5, 5);
-scene.add(light);
-
-let guitar;
-
-// ✅ Make sure GLTFLoader is available
-console.log("GLTFLoader available?", THREE.GLTFLoader);
-
-let loader = new THREE.GLTFLoader();
-loader.load(
-    "https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf",
-    function (gltf) {
-        guitar = gltf.scene;
-        guitar.scale.set(2, 2, 2);
-        guitar.position.set(0, -1, -5);
-        scene.add(guitar);
-    },
-    undefined,
-    function (err) {
-        console.error("Error loading model:", err);
-    }
-);
-
-// Scroll-driven camera movement
-ScrollTrigger.create({
-    trigger: "body",
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true,
-    onUpdate: self => {
-        let progress = self.progress; // 0 to 1
-        if (guitar) {
-            guitar.rotation.y = progress * Math.PI * 2;
-            guitar.position.z = -5 + Math.sin(progress * Math.PI) * 1.5;
-        }
-    }
-});
-
-function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-}
-animate();
-
-// Handle resize
-window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
+/* -------------------------
+   THREE.js / 3D code
+   -------------------------
+   NOTE: 3D guitar code removed from this file to avoid
+   GLTFLoader / version conflicts. Re-add later in a dedicated module
+   (preferably with ES modules and examples/jsm loaders).
+*/
