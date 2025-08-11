@@ -18,6 +18,7 @@ thumb
 sketch
 
 /images
+/assets
 
 ### VisualStudioCode ###
 .vscode/*
