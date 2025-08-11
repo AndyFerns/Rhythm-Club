@@ -11,6 +11,36 @@ body {
     overflow-x: hidden;
 }
 
+/* Particle Background */
+#tsparticles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -2;
+}
+
+/* Parallax Layers */
+.parallax-layer {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -1;
+    opacity: 0.2;
+}
+
+.layer-back {
+    background-image: url("https://www.transparenttextures.com/patterns/diagmonds-light.png");
+    top: 100px;
+}
+
+.layer-mid {
+    background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+    top: 500px;
+}
+
 /* Hero Section */
 .hero {
     height: 100vh;
