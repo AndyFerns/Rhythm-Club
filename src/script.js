@@ -9,12 +9,18 @@ tsParticles.load("tsparticles", {
         shape: { type: "circle" },
         opacity: { value: 0.5 },
         size: { value: 3 },
-        move: { enable: true, speed: 1, direction: "none", outModes: "out" },
+        move: { enable: true, speed: 1 },
         links: { enable: true, color: "#a89ff2", opacity: 0.4, distance: 150 }
     },
     interactivity: {
-        events: { onHover: { enable: true, mode: "repulse" }, onClick: { enable: true, mode: "push" } },
-        modes: { repulse: { distance: 100 }, push: { quantity: 4 } }
+        events: { 
+            onHover: { enable: true, mode: "repulse" }, 
+            onClick: { enable: true, mode: "push" } 
+        },
+        modes: { 
+            repulse: { distance: 100 }, 
+            push: { quantity: 4 } 
+        }
     }
 });
 
@@ -47,23 +53,78 @@ gsap.from(".team-member", {
     stagger: 0.2
 });
 
-// Parallax Effect
-gsap.to(".layer-back", {
-    yPercent: -30,
-    ease: "none",
-    scrollTrigger: {
-        trigger: ".about",
-        start: "top bottom",
-        scrub: true
+// Cinematic Parallax with fade
+[".layer-back", ".layer-mid"].forEach(layer => {
+    gsap.fromTo(layer,
+        { opacity: 0, yPercent: 0 },
+        {
+            opacity: 0.4,
+            yPercent: layer.includes("back") ? -30 : -15,
+            ease: "none",
+            scrollTrigger: {
+                trigger: layer.includes("back") ? ".about" : ".team",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true
+            }
+        }
+    );
+});
+
+// THREE.JS Guitar Scene
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+let renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("guitarCanvas"), alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+let light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(5, 5, 5);
+scene.add(light);
+
+let guitar;
+
+// ✅ Make sure GLTFLoader is available
+console.log("GLTFLoader available?", THREE.GLTFLoader);
+
+let loader = new THREE.GLTFLoader();
+loader.load(
+    "https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf",
+    function (gltf) {
+        guitar = gltf.scene;
+        guitar.scale.set(2, 2, 2);
+        guitar.position.set(0, -1, -5);
+        scene.add(guitar);
+    },
+    undefined,
+    function (err) {
+        console.error("Error loading model:", err);
+    }
+);
+
+// Scroll-driven camera movement
+ScrollTrigger.create({
+    trigger: "body",
+    start: "top top",
+    end: "bottom bottom",
+    scrub: true,
+    onUpdate: self => {
+        let progress = self.progress; // 0 to 1
+        if (guitar) {
+            guitar.rotation.y = progress * Math.PI * 2;
+            guitar.position.z = -5 + Math.sin(progress * Math.PI) * 1.5;
+        }
     }
 });
 
-gsap.to(".layer-mid", {
-    yPercent: -15,
-    ease: "none",
-    scrollTrigger: {
-        trigger: ".team",
-        start: "top bottom",
-        scrub: true
-    }
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+animate();
+
+// Handle resize
+window.addEventListener("resize", () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
