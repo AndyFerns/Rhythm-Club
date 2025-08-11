@@ -18,6 +18,15 @@ tsParticles.load("tsparticles", {
         },
         opacity: { value: 0.5 },
         size: { value: 20, random: { enable: true, minimumValue: 15 }},
+        rotate: {
+            value: { min: 0, max: 360 },
+            direction: "random",
+            animation: {
+                enable: true,
+                speed: 2, // smaller = slower
+                sync: false
+            }
+        },
         move: { enable: true, speed: 1 },
         // links: { enable: true, color: "#a89ff2", opacity: 0.4, distance: 150 }
         links: {enable: false}
@@ -28,7 +37,7 @@ tsParticles.load("tsparticles", {
             onClick: { enable: true, mode: "push" } 
         },
         modes: { 
-            repulse: { distance: 100 }, 
+            repulse: { distance: 40 }, 
             push: { quantity: 4 } 
         }
     }
