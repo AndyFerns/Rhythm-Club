@@ -116,8 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const bassVal = avg(bassBins) / 255;
             const trebleVal = avg(trebleBins) / 255;
 
-            const sizeMultiplier = 0.9 + bassVal * 1.8;
-            const opacityAdd = trebleVal * 0.9;
+            const sizeMultiplier = 0.5 + bassVal * 4.0;
+            const opacityAdd = trebleVal * 1.5;
 
             particleArray.forEach(p => {
                 if (!p) return;
