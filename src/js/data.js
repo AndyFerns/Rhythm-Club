@@ -7,46 +7,47 @@
 export const teamData = {
     "president": { 
         "name": "Shruti Shirdhankar", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Shruti"
+        "imageUrl": "../images/Core Team/shruti.jpg" 
     },
     "vicePresident": { 
         "name": "Vice President Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=VP"
+        "imageUrl": "../images/Core Team/vp.jpg"
     },
     "secretary": { 
         "name": "Secretary Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Sec"
+        "imageUrl": "../images/Core Team/secretary.jpg"
     },
     "operationsLead": { 
         "name": "Operations Lead Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Ops"
+        "imageUrl": "../images/Core Team/operations.jpg"
     },
     "docHead": { 
-        "name": "Doc Head Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Doc"
+        "name": "Andrew Fernandes", 
+        "imageUrl": "../images/Core Team/doc.jpg"
     },
     "prHead1": { 
         "name": "PR Head 1 Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=PR1"
+        "imageUrl": "../images/Core Team/pr1.jpg"
     },
     "prHead2": { 
         "name": "PR Head 2 Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=PR2"
+        "imageUrl": "../images/Core Team/pr2.jpg"
     },
     "eventCoordinator1": { 
         "name": "Event Coordinator 1", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=EC1"
+        "imageUrl": "../images/Core Team/ec1.jpg"
     },
     "eventCoordinator2": { 
         "name": "Event Coordinator 2", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=EC2"
+        "imageUrl": "../images/Core Team/ec2.jpg"
     },
     "creativeLead": { 
         "name": "Creative Lead Name", 
-        "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Creative"
+        "imageUrl": "../images/Core Team/creative.jpg"
     }
 };
 
+// export event data to be imported by app.js
 export const eventsData = [
     {
         "title": "Battle of the Bands 2025",
