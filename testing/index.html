@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhythm Club FCRIT</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- GSAP + ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- tsParticles -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
+
+    <!-- Custom Styles (Kept from your original) -->
+    <style>
+        /* Base */
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Gradient from your CSS */
+            background: linear-gradient(120deg, #0d1b4a, #5e4b8b);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Watermark Logo (from your CSS) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vmin; height: 80vmin;
+            /* --- TODO: Replace with your logo path --- */
+            background: url("https://placehold.co/500x500/FFFFFF/FFFFFF?text=Logo") center/contain no-repeat;
+            opacity: 0.1; /* Made it fainter */
+            z-index: -4;
+            pointer-events: none;
+        }
+
+        /* Particle Background */
+        #tsparticles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -3; /* Behind 3D canvas */
+        }
+
+        /* 3D Guitar Canvas */
+        #guitarCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Lighting Sweep (from your CSS) */
+        .lighting-sweep {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(
+                120deg,
+                rgba(255, 0, 150, 0.15),
+                rgba(0, 255, 255, 0.15),
+                rgba(255, 255, 0, 0.15)
+            );
+            background-size: 300% 300%;
+            animation: sweep 12s ease-in-out infinite;
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        @keyframes sweep {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Curtain Effect (from your CSS) */
+        #curtain {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #curtain img {
+            width: 90%;
+            max-width: 550px;
+            animation: fadeIn 1s ease-out;
+            cursor: pointer;
+        }
+
+        #curtain.open {
+            animation: curtainOpen 2s ease forwards;
+        }
+
+        @keyframes curtainOpen {
+            0% { clip-path: inset(0% 0% 0% 0%); }
+            100% { clip-path: inset(0% 50% 0% 50%); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d1b4a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a89ff2;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c3bdf5;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+
+    <!-- Curtain effect -->
+    <div id="curtain">
+        <!-- TODO: Replace with your logo -->
+        <img src="https://placehold.co/600x600/000000/FFFFFF?text=Rhythm+Club" class="curtain-logo" alt="Rhythm Club Logo - Click to Enter">
+    </div>
+
+    <!-- Lighting sweeping effect -->
+    <div class="lighting-sweep"></div>
+
+    <!-- Particle Container -->
+    <div id="tsparticles"></div>
+
+    <!-- 3D Canvas -->
+    <canvas id="guitarCanvas"></canvas>
+
+    <!-- Audio element -->
+    <!-- TODO: Replace with your audio file path -->
+    <audio id="bgMusic" src="https://actions.google.com/sounds/v1/ambiences/jazzy_cafe.ogg" preload="auto" loop></audio>
+    
+    <!-- New Sticky Navbar -->
+    <nav class="sticky top-0 z-50 w-full bg-white/5 backdrop-blur-md shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-purple-300">Rhythm Club FCRIT</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#team" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team</a>
+                        <a href="#events" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero h-screen relative flex justify-center items-center text-center overflow-hidden">
+        <div class="relative z-10 p-4">
+            <div class="hero-content">
+                <!-- TODO: Replace with your college logo -->
+                <img src="https://placehold.co/150x150/FFFFFF/0d1b4a?text=FCRIT+Logo" alt="FCRIT Logo" class="logo mx-auto w-24 h-24 rounded-full mb-4">
+                <h1 class="text-5xl md:text-7xl font-bold mb-2 text-shadow-lg">Rhythm Club</h1>
+                <p class="text-xl md:text-2xl text-purple-300">The Musical Heartbeat of FCRIT</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="section py-24 px-6 relative z-10 bg-black/20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6 text-purple-300">About Us</h2>
+            <p class="text-lg md:text-xl text-gray-200 leading-relaxed">
+                Rhythm Club FCRIT is a vibrant community of musicians including singers, instrumentalists, beatboxers and people interested in music
+                in general who bring life to the college's cultural stage. 
+                From hosting electrifying performances to organizing intra-collegiate events, we celebrate creativity in every form.
+            </p>
+        </div>
+    </section>
+
+    <!-- Team Section (Now Dynamic) -->
+    <section id="team" class="section py-24 px-6 relative z-10">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-12 text-purple-300">Meet the Team</h2>
+            <!-- Grid will be populated by local data -->
+            <div id="team-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Team members will be injected here by script -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section (Now Dynamic) -->
+    <section id="events" class="section py-24 px-6 relative z-10 bg-black/20">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold mb-12 text-center text-purple-300">Our Events</h2>
+            <!-- Grid will be populated by local data -->
+            <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Event cards will be injected here by script -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-black/50 py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-6 md:mb-0">
+                <h3 class="text-lg font-bold">Rhythm Club FCRIT</h3>
+                <p class="text-sm text-gray-400">© 2025 All rights reserved.</p>
+            </div>
+            <div class="flex space-x-6 mb-6 md:mb-0">
+                <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-whatsapp"></i></a>
+                <a href="mailto:placeholder@email.com" class="text-gray-400 hover:text-white text-2xl"><i class="fas fa-envelope"></i></a>
+            </div>
+            <div id="footer-contacts" class="text-sm text-gray-400">
+                <!-- Contact info will be injected here -->
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Event Modal (New) -->
+    <div id="event-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative z-10 bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b border-gray-700">
+                <h3 id="modal-title" class="text-2xl font-bold text-purple-300">Event Title</h3>
+                <button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <img id="modal-image" src="" alt="Event Image" class="w-full h-64 object-cover rounded-lg mb-6">
+                <p id="modal-date" class="text-purple-300 text-sm mb-4">Event Date</p>
+                <p id="modal-description" class="text-gray-200 leading-relaxed whitespace-pre-wrap">Event description...</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Frontend Logic (Your scripts + 3D) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ===================================================================
+            //  YOUR CLUB DATA LIVES HERE
+            //  To update the website, just edit the text in this section.
+            // ===================================================================
+
+            const teamData = {
+                "president": { 
+                    "name": "Siddhant M", 
+                    "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Sid"
+                },
+                "vicePresident": { 
+                    "name": "Jane Smith", 
+                    "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Jane"
+                },
+                "secretary": { 
+                    "name": "Alex Lee", 
+                    "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Alex"
+                },
+                "docHead": { 
+                    "name": "Andrew Fernandes", 
+                    "imageUrl": "https://placehold.co/400x400/5e4b8b/FFFFFF?text=Andrew"
+                }
+            };
+            
+            const eventsData = [
+                {
+                    "title": "Battle of the Bands 2025",
+                    "date": "October 15, 2025",
+                    "description": "Our flagship event! FCRIT's finest bands compete for glory. This year featured 5 bands, 3 judges, and an electrifying guest performance from 'The Local Train'.\n\nThis is a great place for your event report, Doc Head!",
+                    "imageUrl": "https://placehold.co/600x400/c7a3e6/0d1b4a?text=Battle+of+the+Bands"
+                },
+                {
+                    "title": "Acoustic Night",
+                    "date": "August 22, 2025",
+                    "description": "A soulful evening under the stars. We transformed the college amphitheater into a cozy lounge with unplugged performances from singers and instrumentalists. A huge turnout and a magical vibe.",
+                    "imageUrl": "https://placehold.co/600x400/a3e6d8/0d1b4a?text=Acoustic+Night"
+                },
+                {
+                    "title": "Open Mic Session",
+                    "date": "June 10, 2025",
+                    "description": "A casual event for anyone to showcase their talent. We had everything from beatboxing and guitar solos to poetry and stand-up comedy. Held in the college canteen during lunch break.",
+                    "imageUrl": "https://placehold.co/600x400/e6a3a3/0d1b4a?text=Open+Mic"
+                }
+                // Add new events here by copying the block above
+            ];
+
+            // ===================================================================
+            //  WEBSITE LOGIC
+            //  (No need to edit below here)
+            // ===================================================================
+
+            // --- DOM Elements ---
+            const teamGrid = document.getElementById('team-grid');
+            const eventsGrid = document.getElementById('events-grid');
+            const footerContacts = document.getElementById('footer-contacts');
+
+            // --- Event Modal Elements ---
+            const eventModal = document.getElementById('event-modal');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDate = document.getElementById('modal-date');
+            const modalDescription = document.getElementById('modal-description');
+            const modalImage = document.getElementById('modal-image');
+
+            // --- Helper to prevent XSS ---
+            function escapeHTML(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"']/g, function(m) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[m];
+                });
+            }
+
+            // --- Render Functions ---
+            function renderTeam(team) {
+                teamGrid.innerHTML = ''; // Clear existing
+                const roles = [
+                    { key: 'president', title: 'President' },
+                    { key: 'vicePresident', title: 'Vice President' },
+                    { key: 'secretary', title: 'Secretary' },
+                    { key: 'docHead', title: 'Documentation Head' }
+                ];
+
+                roles.forEach(role => {
+                    const member = team[role.key];
+                    if (member) {
+                        const memberHtml = `
+                          <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-purple-400/30">
+                            <img src="${escapeHTML(member.imageUrl) || 'https://placehold.co/400x400/5e4b8b/FFFFFF?text=?'}" alt="${escapeHTML(member.name)}" class="w-40 h-40 object-cover rounded-full mx-auto mb-4 border-4 border-white/20">
+                            <h3 class="text-xl font-bold text-center">${escapeHTML(member.name) || 'Position Open'}</h3>
+                            <p class="text-center text-purple-300">${escapeHTML(role.title)}</p>
+                          </div>
+                        `;
+                        teamGrid.innerHTML += memberHtml;
+                    }
+                });
+
+                // Also populate footer contacts
+                if (team.president) {
+                    footerContacts.innerHTML += `<p>President: ${escapeHTML(team.president.name)}</p>`;
+                }
+                if (team.vicePresident) {
+                    footerContacts.innerHTML += `<p>Vice-President: ${escapeHTML(team.vicePresident.name)}</p>`;
+                }
+            }
+
+            function renderEvents(events) {
+                eventsGrid.innerHTML = ''; // Clear existing
+                if (events.length === 0) {
+                    eventsGrid.innerHTML = `<p class="text-center text-gray-400 col-span-full">No events found. Check back soon!</p>`;
+                    return;
+                }
+                
+                events.forEach(event => {
+                    const eventCardHtml = `
+                    <div class="event-card bg-white/5 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105 hover:shadow-purple-400/30"
+                         data-title="${escapeHTML(event.title)}"
+                         data-date="${escapeHTML(event.date)}"
+                         data-description="${escapeHTML(event.description)}"
+                         data-image="${escapeHTML(event.imageUrl)}">
+                      <img src="${escapeHTML(event.imageUrl) || 'https://placehold.co/600x400/5e4b8b/FFFFFF?text=Rhythm+Event'}" alt="${escapeHTML(event.title)}" class="w-full h-48 object-cover">
+                      <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 truncate">${escapeHTML(event.title)}</h3>
+                        <p class="text-purple-300 text-sm mb-4">${escapeHTML(event.date)}</p>
+                        <p class="text-gray-300 text-sm h-20 overflow-hidden text-ellipsis">${escapeHTML(event.description.substring(0, 100))}...</p>
+                      </div>
+                    </div>
+                    `;
+                    eventsGrid.innerHTML += eventCardHtml;
+                });
+            }
+
+            // --- Modal Logic ---
+            function openModal(data) {
+                modalTitle.textContent = data.title;
+                modalDate.textContent = data.date;
+                // Use innerHTML for description to render newlines (\n)
+                modalDescription.innerHTML = escapeHTML(data.description).replace(/\n/g, '<br>');
+                modalImage.src = data.image || 'https://placehold.co/600x400/5e4b8b/FFFFFF?text=Rhythm+Event';
+                eventModal.classList.remove('hidden');
+            }
+
+            function closeModal() {
+                eventModal.classList.add('hidden');
+            }
+
+            modalCloseBtn.addEventListener('click', closeModal);
+            eventModal.addEventListener('click', (e) => {
+                if (e.target === eventModal) {
+                    closeModal();
+                }
+            });
+
+            eventsGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.event-card');
+                if (card) {
+                    const data = {
+                        title: card.dataset.title,
+                        date: card.dataset.date,
+                        description: card.dataset.description,
+                        image: card.dataset.image,
+                    };
+                    openModal(data);
+                }
+            });
+
+            // --- Initial Renders ---
+            renderTeam(teamData);
+            renderEvents(eventsData);
+            
+            // --- GSAP Animations (from your script.js) ---
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.from(".hero-content", { duration: 1.5, opacity: 0, y: 50, delay: 1.5 });
+            gsap.utils.toArray(".section").forEach(section => {
+                gsap.from(section, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse"
+                    },
+                    duration: 1,
+                    opacity: 0,
+                    y: 50,
+                    ease: "power1.out"
+                });
+            });
+            
+            // --- tsParticles (from your script.js) ---
+            tsParticles.load("tsparticles", {
+                background: { color: "transparent" },
+                particles: {
+                    number: { value: 60, density: { enable: true, area: 800 } },
+                    color: { value: "#a89ff2" },
+                    shape: {
+                        type: "character",
+                        character: {
+                            value: ["♪", "♫", "♬", "𝄞", "♩", "♭", "♯", "♮"],
+                            font: "Poppins",
+                            style: "",
+                            weight: "400",
+                            fill: true
+                        }
+                    },
+                    opacity: { value: 0.6 },
+                    size: { value: 18, random: { enable: true, minimumValue: 12 } },
+                    rotate: {
+                        value: { min: 0, max: 360 },
+                        direction: "random",
+                        animation: { enable: true, speed: 2, sync: false }
+                    },
+                    move: { enable: true, speed: 1 },
+                    links: { enable: false }
+                },
+                interactivity: {
+                    events: {
+                        onHover: { enable: true, mode: "repulse" },
+                        onClick: { enable: true, mode: "push" }
+                    },
+                    modes: { repulse: { distance: 40 }, push: { quantity: 4 } }
+                }
+            });
+
+            // --- Audio Logic (from your audio.js) ---
+            const logo = document.querySelector(".curtain-logo");
+            const curtain = document.getElementById("curtain");
+
+            logo.addEventListener("click", async function handleStart() {
+                
+                // --- FIX: Open curtain FIRST ---
+                if (curtain) {
+                    curtain.classList.add("open");
+                    setTimeout(() => {
+                        curtain.style.display = "none";
+                    }, 2000); // 2-second animation
+                }
+                
+                // --- Now, try to play audio (it can fail gracefully) ---
+                let audioEl = document.getElementById("bgMusic");
+                if (!audioEl) {
+                    console.warn("Audio element not found");
+                    return;
+                }
+                audioEl.loop = true;
+                audioEl.volume = 0.6;
+
+                let audioCtx;
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.error("Web Audio API not supported:", e);
+                    return; // Exit if web audio isn't supported
+                }
+
+                const sourceNode = audioCtx.createMediaElementSource(audioEl);
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                sourceNode.connect(analyser);
+                analyser.connect(audioCtx.destination);
+
+                try {
+                    await audioCtx.resume();
+                    await audioEl.play();
+                } catch (err) {
+                    console.error("Failed to play audio (this is common):", err);
+                    // Do NOT return here. The curtain is already opening.
+                }
+
+                // --- Find particles (can also fail gracefully) ---
+                function getParticlesContainer() {
+                    try {
+                        if (window.tsParticles && typeof tsParticles.domItem === "function") {
+                            return tsParticles.domItem(0);
+                        }
+                    } catch (e) { /* ignore */ }
+                    if (window.tsParticles && tsParticles.domItems && tsParticles.domItems.length) {
+                        return tsParticles.domItems[0];
+                    }
+                    return null;
+                }
+
+                let container = getParticlesContainer();
+                let attempts = 0;
+                while (!container && attempts < 20) {
+                    await new Promise(r => setTimeout(r, 100));
+                    container = getParticlesContainer();
+                    attempts++;
+                }
+                if (!container) {
+                    console.warn("tsParticles container not found; audio-reactive particles disabled.");
+                    return; // Exit if particles aren't found
+                }
+
+                const particleArray = container.particles.array || [];
+                particleArray.forEach(p => {
+                    if (!p) return;
+                    if (p._origSize == null && p.size?.value != null) p._origSize = p.size.value;
+                    if (p._origOpacity == null && p.opacity?.value != null) p._origOpacity = p.opacity.value;
+                });
+
+                const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+
+                function audioLoop() {
+                    analyser.getByteFrequencyData(dataArray);
+
+                    const bassBins = dataArray.slice(0, Math.max(1, Math.floor(bufferLength / 4)));
+                    const trebleBins = dataArray.slice(Math.floor(bufferLength / 2));
+
+                    const bassVal = avg(bassBins) / 255;
+                    const trebleVal = avg(trebleBins) / 255;
+
+                    const sizeMultiplier = 0.5 + bassVal * 4.0;
+                    const opacityAdd = trebleVal * 1.5;
+
+                    particleArray.forEach(p => {
+                        if (!p) return;
+                        let newSize = (p._origSize ?? 16) * sizeMultiplier;
+                        newSize = Math.max(6, Math.min(newSize, 80));
+                        if (p.size?.value != null) p.size.value = newSize;
+
+                        let newOp = (p._origOpacity ?? 0.6) + opacityAdd;
+                        newOp = Math.max(0.1, Math.min(newOp, 1));
+                        if (p.opacity?.value != null) p.opacity.value = newOp;
+                    });
+
+                    requestAnimationFrame(audioLoop);
+                }
+                
+                audioLoop(); // Start the loop
+                logo.removeEventListener("click", handleStart); // Prevent double-clicks
+            });
+
+            // --- Three.js 3D Background (NEW) ---
+            let scene, camera, renderer, knot;
+            const canvas = document.getElementById('guitarCanvas');
+
+            function init3D() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+                const geometry = new THREE.TorusKnotGeometry(1.5, 0.3, 100, 16);
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: 0xa89ff2, 
+                    roughness: 0.5, 
+                    metalness: 0.1 
+                });
+                knot = new THREE.Mesh(geometry, material);
+                knot.position.z = -1;
+                scene.add(knot);
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+                scene.add(ambientLight);
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                directionalLight.position.set(5, 5, 5);
+                scene.add(directionalLight);
+
+                camera.position.z = 5;
+                animate3D();
+            }
+
+            function animate3D() {
+                requestAnimationFrame(animate3D);
+                if (knot) {
+                    knot.rotation.x += 0.002;
+                    knot.rotation.y += 0.003;
+                }
+                renderer.render(scene, camera);
+            }
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            window.addEventListener('resize', onWindowResize, false);
+            init3D();
+        });
+    </script>
+</body>
+</html>
+
