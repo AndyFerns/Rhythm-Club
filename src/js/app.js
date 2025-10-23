@@ -1,13 +1,18 @@
 // Import club data from data.js
-// The './' is important! It tells the browser to look in the same folder.
 import { teamData, eventsData } from './data.js';
+
+// Import Three.js and the GLTFLoader
+// This works because of the 'importmap' in index.html
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'; 
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js'; 
 
 // Wait for the DOM to be fully loaded before running any script
 document.addEventListener('DOMContentLoaded', () => {
 
     // ===================================================================
     //  WEBSITE LOGIC
-    //  (No need to edit below here)
     // ===================================================================
 
     // --- DOM Elements ---
@@ -229,12 +234,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // --- Now, try to play audio (it can fail gracefully) ---
             let audioEl = document.getElementById("bgMusic");
-            if (!audioEl) {
+            if (audioEl) {
+                audioEl.src = "../../assets/music/So What - Miles Davis (1959).mp3";
+                audioEl.loop = true;
+                audioEl.volume = 0.6;
+            } else {
                 console.warn("Audio element not found");
                 return;
             }
-            audioEl.loop = true;
-            audioEl.volume = 0.6;
 
             let audioCtx;
             try {
@@ -328,42 +335,110 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn("Curtain or logo not found. Curtain animation disabled.");
     }
 
-    // --- Three.js 3D Background (NEW) ---
-    let scene, camera, renderer, knot;
+    // -----------------------------------
+    // 3D Background Rendering Section
+    // -----------------------------------
+
+    // --- Three.js 3D Background (NEW: Now loads your model) ---
+    let scene, camera, renderer, model;
     const canvas = document.getElementById('guitarCanvas');
 
-    if (canvas && window.THREE) {
-        function init3D() {
+    if (canvas && THREE) {
+        
+        function init3DModel() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-
-            const geometry = new THREE.TorusKnotGeometry(1.5, 0.3, 100, 16);
-            const material = new THREE.MeshStandardMaterial({ 
-                color: 0xa89ff2, 
-                roughness: 0.5, 
-                metalness: 0.1 
-            });
-            knot = new THREE.Mesh(geometry, material);
-            knot.position.z = -1;
-            scene.add(knot);
+            renderer.setPixelRatio(window.devicePixelRatio); // For sharp images
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.outputEncoding = THREE.sRGBEncoding;
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
             const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
             directionalLight.position.set(5, 5, 5);
-            scene.add(directional_light); // Typo corrected from directional_light to directionalLight
+            scene.add(directionalLight);
 
             camera.position.z = 5;
+
+            // --- Load your 3D Model ---
+            const loader = new GLTFLoader();
+
+            // // Set the base path for the helmet's assets
+            // loader.setPath('../../assets/3D Models/Damaged Helmet/');
+
+            // loader.load(
+            //     'DamagedHelmet.gltf', // <-- Correct path
+            //     function (gltf) {
+            //         model = gltf.scene;
+            //         model.scale.set(1.5, 1.5, 1.5); // Adjust scale as needed
+            //         model.position.set(0, -1, 0); // Adjust position
+            //         scene.add(model);
+            //     },
+            //     undefined, // 'onProgress' callback (optional)
+            //     function (error) {
+            //         console.error('An error happened loading the 3D model:', error);
+            //     }
+            // );
+
+        
+            // NOTE: This uses OBJLoader and MTLLoader, not GLTFLoader
+            
+            const mtlLoader = new MTLLoader();
+            const objLoader = new OBJLoader();
+            
+            // Set the path to the folder containing the .obj and .mtl files
+            const guitarPath = '../../assets/3D Models/27-gibson_335/Gibson 335/';
+            mtlLoader.setPath(guitarPath);
+            objLoader.setPath(guitarPath);
+            
+            // Set path for textures (which are in the 'Texturas' subfolder)
+            mtlLoader.setResourcePath(guitarPath + 'Texturas/');
+
+            // 1. Load the Material (.mtl file)
+            mtlLoader.load(
+                'Gibson 335_Low_Poly.mtl', // Or 'Gibson 335_High_Poly.mtl'
+                function (materials) {
+                    materials.preload();
+                    
+                    // 2. Set materials and load the Object (.obj file)
+                    objLoader.setMaterials(materials);
+                    objLoader.load(
+                        'Gibson 335_Low_Poly.obj', // Or 'Gibson 335_High_Poly.obj'
+                        function (object) {
+                            // Scale and position your guitar
+                            object.scale.set(0.5, 0.5, 0.5); // <-- Adjust scale as needed!
+                            object.position.x = -5
+                            object.position.y = -1; // <-- Adjust position
+                            
+                            // Add the guitar to the scene
+                            scene.add(object); 
+                            
+                            // If you use the guitar, assign it to the 'model' variable
+                            model = object; 
+                        },
+                        undefined,
+                        function (error) {
+                            console.error('An error happened loading the OBJ:', error);
+                        }
+                    );
+                },
+                undefined,
+                function (error) {
+                    console.error('An error happened loading the MTL:', error);
+                }
+            );
+            
+            
             animate3D();
         }
 
         function animate3D() {
             requestAnimationFrame(animate3D);
-            if (knot) {
-                knot.rotation.x += 0.002;
-                knot.rotation.y += 0.003;
+            if (model) {
+                // Gently rotate the model
+                model.rotation.y += 0.003;
             }
             renderer.render(scene, camera);
         }
@@ -375,7 +450,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.addEventListener('resize', onWindowResize, false);
-        init3D();
+        
+        // Call the new function
+        init3DModel();
+
     } else {
         console.warn("Three.js canvas or library not found. 3D background disabled.");
     }
