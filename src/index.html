@@ -1,134 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rhythm Club FCRIT</title>
-    <link rel="stylesheet" href="style.css" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
-    <link rel="icon" href="/images/rhythmLogo-removebg-preview.png" type="image/x-icon">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-</head>
-<body>
-    <!-- Curtain effect -->
-    <div id="curtain">
-        <div class="curtain-panel left"></div>
-        <div class="curtain-panel right"></div>
-        <div class="curtain-content">
-            <img src="/images/rhythmLogo.jpeg" class="curtain-logo" alt="Rhythm Club Logo">
-            <!-- <button id="startMusicBtn">Enter</button> -->
-        </div>
-    </div>
-
-
-    <!-- lighting sweeping effect -->
-    <div class="lighting-sweep"></div>
-
-    <!-- Particle Container -->
-    <div id="tsparticles"></div>
-
-    <!-- 3D Guitar Canvas -->
-    <canvas id="guitarCanvas"></canvas>
-
-    <!-- Hero Section -->
-    <header class="hero">
-        <div class="overlay"></div>
-        <div class="hero-content">
-            <!-- <img src="/images/rhythmLogo.jpeg" alt="Rhythm Club Logo" class="logo"> -->
-            <h1>Rhythm Club</h1>
-            <p>The Musical Heartbeat of FCRIT</p>
-            <img src="/images/fcritlogo.png" alt="FCRIT Logo" class="logo small">
-        </div>
-    </header>
-
-    <!-- Add an audio element in your index.html -->
-    <audio id="bgMusic" src="/assets/music/So What - Miles Davis (1959).mp3" preload="auto" autoplay loop></audio>
-
-    <!-- Parallax Background Layers -->
-    <div class="parallax-layer layer-back"></div>
-    <div class="parallax-layer layer-mid"></div>
-
-    <!-- About Section -->
-    <section class="about section">
-        <h2>About Us</h2>
-        <p>
-            Rhythm Club FCRIT is a vibrant community of musicians including singers, instrumentalists, beatboxers and people interested in music
-            in general who bring life to the college's cultural stage. 
-            From hosting electrifying performances to organizing intra-collegiate events, we celebrate creativity in every form.
-        </p>
-    </section>
-
-    <!-- Team Section -->
-    <section class="team section">
-        <h2>Meet the Team</h2>
-        <div class="team-grid">
-            <div class="team-member">
-                <img src="https://placehold.co/400" alt="President">
-                <h3>John Doe</h3>
-                <p>President</p>
-            </div>
-            <div class="team-member">
-                <img src="https://placehold.co/400" alt="Vice President">
-                <h3>Jane Smith</h3>
-                <p>Vice President</p>
-            </div>
-            <div class="team-member">
-                <img src="https://placehold.co/400" alt="Secretary">
-                <h3>Alex Lee</h3>
-                <p>Secretary</p>
-            </div>
-            <div class="team-member">
-                <img src="https://placehold.co/400" alt="Documentation Head">
-                <h3>Andrew Fernandes</h3>
-                <p>Documentation Head</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Events Section -->
-    <section class="events section">
-        <h2>Events</h2>
-        <div class="events-wrapper">
-            <div class="event-card past">
-                <h3>Past Event</h3>
-                <p>Description of the past event...</p>
-            </div>
-            <div class="event-card current">
-                <h3>Current Event</h3>
-                <p>Description of the ongoing event...</p>
-            </div>
-            <div class="event-card future">
-                <h3>Future Event</h3>
-                <p>Description of the upcoming event...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="socials">
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-whatsapp"></i></a>
-            <a href="mailto:placeholder@email.com"><i class="fas fa-envelope"></i></a>
-        </div>
-        <div class="contacts">
-            <p>President: Person 1 - +91XXXXXXXXXX</p>
-            <p>Vice-President: Person 2 - +91XXXXXXXXXX</p>
-        </div>
-        <p class="copy">© 2025 Rhythm Club FCRIT. All rights reserved.</p>
-    </footer>
-
-    <!-- Libraries -->
-    <!-- Three.js core -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
-
-    <!-- GLTFLoader for the global THREE namespace -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Your Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 
     <!-- GSAP + ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -136,8 +23,154 @@
 
     <!-- tsParticles -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
+    
+    <!-- 
+      NEW: Import Map
+      This tells the browser where to find Three.js modules
+      when 'app.js' asks for them.
+    -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.148.0/examples/jsm/"
+      }
+    }
+    </script>
 
-    <script src="js/script.js"></script>
-    <script src="js/audio.js"></script>
+</head>
+
+<body class="bg-gray-900 text-white">
+
+    <!-- Curtain effect -->
+    <div id="curtain">
+        <!-- TODO: Replace with your logo -->
+        <img src="../images/rhythmLogo-removebg-preview.png" class="curtain-logo" alt="Rhythm Club Logo - Click to Enter">
+    </div>
+
+    <!-- Lighting sweeping effect -->
+    <div class="lighting-sweep"></div>
+
+    <!-- Particle Container -->
+    <div id="tsparticles"></div>
+
+    <!-- 3D Canvas -->
+    <canvas id="guitarCanvas"></canvas>
+
+    <!-- Audio element -->
+    <!-- TODO: Replace with your audio file path -->
+    <audio id="bgMusic" src="../assets/music/So What - Miles Davis (1959).mp3" preload="auto" loop></audio>
+    
+    <!-- New Sticky Navbar -->
+    <nav class="sticky top-0 z-50 w-full bg-white/5 backdrop-blur-md shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-purple-300">Rhythm Club FCRIT</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#team" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team</a>
+                        <a href="#events" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Events</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero h-screen relative flex justify-center items-center text-center overflow-hidden">
+        <div class="relative z-10 p-4">
+            <div class="hero-content">
+                <!-- TODO: Replace with your college logo -->
+                <img src="../images/fcritlogo-removebg-preview.png" alt="FCRIT Logo" class="logo mx-auto w-24 h-24 rounded-full mb-4">
+                <h1 class="text-5xl md:text-7xl font-bold mb-2 text-shadow-lg">Rhythm Club</h1>
+                <p class="text-xl md:text-2xl text-purple-300">The Musical Heartbeat of FCRIT</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="section py-24 px-6 relative z-10 bg-black/20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6 text-purple-300">About Us</h2>
+            <p class="text-lg md:text-xl text-gray-200 leading-relaxed">
+                Rhythm Club FCRIT is a vibrant community of musicians including singers, instrumentalists, beatboxers and people interested in music
+                in general who bring life to the college's cultural stage. 
+                From hosting electrifying performances to organizing intra-collegiate events, we celebrate creativity in every form.
+            </p>
+        </div>
+    </section>
+
+    <!-- Team Section (Now Dynamic) -->
+    <section id="team" class="section py-24 px-6 relative z-10">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-12 text-purple-300">Meet the Team</h2>
+            <!-- Grid will be populated by local data -->
+            <!-- NOTE: You have 10 team members. You may want to change 'lg:grid-cols-4' to 'lg:grid-cols-5' to fit them better -->
+            <div id="team-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                <!-- Team members will be injected here by script -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section (Now Dynamic) -->
+    <section id="events" class="section py-24 px-6 relative z-10 bg-black/20">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold mb-12 text-center text-purple-300">Our Events</h2>
+            <!-- Grid will be populated by local data -->
+            <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Event cards will be injected here by script -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-black/50 py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-6 md:mb-0">
+                <h3 class="text-lg font-bold">Rhythm Club FCRIT</h3>
+                <p class="text-sm text-gray-400">© 2025 All rights reserved.</p>
+            </div>
+            <div class="flex space-x-6 mb-6 md:mb-0">
+                <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white text-2xl"><i class="fab fa-whatsapp"></i></a>
+                <a href="mailto:placeholder@email.com" class="text-gray-400 hover:text-white text-2xl"><i class="fas fa-envelope"></i></a>
+            </div>
+            <div id="footer-contacts" class="text-sm text-gray-400">
+                <!-- Contact info will be injected here -->
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Event Modal (New) -->
+    <div id="event-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative z-10 bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center p-6 border-b border-gray-700">
+                <h3 id="modal-title" class="text-2xl font-bold text-purple-300">Event Title</h3>
+                <button id="modal-close-btn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <img id="modal-image" src="" alt="Event Image" class="w-full h-64 object-cover rounded-lg mb-6">
+                <p id="modal-date" class="text-purple-300 text-sm mb-4">Event Date</p>
+                <p id="modal-description" class="text-gray-200 leading-relaxed whitespace-pre-wrap">Event description...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 
+      Your Custom Main Script 
+      'type="module"' allows this file to use 'import'
+      'defer' ensures it runs after the HTML is parsed
+    -->
+    <script type="module" src="js/app.js" defer></script>
+
 </body>
 </html>
+
