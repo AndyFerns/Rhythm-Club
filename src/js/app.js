@@ -409,6 +409,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             // If you use the guitar, assign it to the 'model' variable
                             model = object; 
 
+                            // Set opacity to 80% (you can change 0.8 to any value)
+                            setModelOpacity(model, 0.65);
+
                             // We call this function *after* the model is loaded
                             setupScrollAnimations(model, camera);
                         },
@@ -436,6 +439,27 @@ document.addEventListener('DOMContentLoaded', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- HELPER FUNCTION TO SET MODEL OPACITY ---
+        function setModelOpacity(model, opacity) {
+            model.traverse(function(child) {
+                if (child.isMesh) {
+                    // Check if the material is an array
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(material => {
+                            material.transparent = true;
+                            material.opacity = opacity;
+                            material.needsUpdate = true; 
+                        });
+                    } else {
+                        // It's a single material
+                        child.material.transparent = true;
+                        child.material.opacity = opacity;
+                        child.material.needsUpdate = true;
+                    }
+                }
+            });
         }
 
 
