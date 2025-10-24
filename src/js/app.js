@@ -360,29 +360,14 @@ document.addEventListener('DOMContentLoaded', () => {
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
+            // camera positioning
+            camera.position.x = -1
             camera.position.z = 5;
 
-            // --- Load your 3D Model ---
-            const loader = new GLTFLoader();
+            // ------------------------------
+            // Model Loading Suite
+            // ------------------------------
 
-            // // Set the base path for the helmet's assets
-            // loader.setPath('../../assets/3D Models/Damaged Helmet/');
-
-            // loader.load(
-            //     'DamagedHelmet.gltf', // <-- Correct path
-            //     function (gltf) {
-            //         model = gltf.scene;
-            //         model.scale.set(1.5, 1.5, 1.5); // Adjust scale as needed
-            //         model.position.set(0, -1, 0); // Adjust position
-            //         scene.add(model);
-            //     },
-            //     undefined, // 'onProgress' callback (optional)
-            //     function (error) {
-            //         console.error('An error happened loading the 3D model:', error);
-            //     }
-            // );
-
-        
             // NOTE: This uses OBJLoader and MTLLoader, not GLTFLoader
             
             const mtlLoader = new MTLLoader();
@@ -393,8 +378,9 @@ document.addEventListener('DOMContentLoaded', () => {
             mtlLoader.setPath(guitarPath);
             objLoader.setPath(guitarPath);
             
-            // Set path for textures (which are in the 'Texturas' subfolder)
+            // Set path for textures (which are in the 'Texturas' subfolder)+ 'Texturas/'
             mtlLoader.setResourcePath(guitarPath + 'Texturas/');
+            objLoader.setResourcePath(guitarPath + 'Texturas/');
 
             // 1. Load the Material (.mtl file)
             mtlLoader.load(
@@ -408,8 +394,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Gibson 335_Low_Poly.obj', // Or 'Gibson 335_High_Poly.obj'
                         function (object) {
                             // Scale and position your guitar
-                            object.scale.set(0.5, 0.5, 0.5); // <-- Adjust scale as needed!
-                            object.position.x = -5
+                            object.scale.set(1.5, 1.5, 1.5); // <-- Adjust scale as needed!
+
+                            // object rotation
+                            object.rotation.x = Math.PI / 2;
+
+                            // object positioning
+                            // object.position.x = -5
                             object.position.y = -1; // <-- Adjust position
                             
                             // Add the guitar to the scene
@@ -417,6 +408,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             // If you use the guitar, assign it to the 'model' variable
                             model = object; 
+
+                            // We call this function *after* the model is loaded
+                            setupScrollAnimations(model, camera);
                         },
                         undefined,
                         function (error) {
@@ -430,16 +424,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             );
             
-            
             animate3D();
         }
 
         function animate3D() {
             requestAnimationFrame(animate3D);
-            if (model) {
-                // Gently rotate the model
-                model.rotation.y += 0.003;
-            }
             renderer.render(scene, camera);
         }
 
@@ -447,6 +436,71 @@ document.addEventListener('DOMContentLoaded', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+
+        // --- GSAP SCROLL ANIMATION FUNCTION ---
+        function setupScrollAnimations(model, camera) {
+            // --- 1. Define animation "states" for each section ---
+            // These are the camera/model positions we'll animate *to*.
+            // Feel free to tweak these values!
+            const sectionStates = {
+                ".hero": {
+                    camX: -3, // left
+                    camZ: 5,  // far
+                    modY: Math.PI / 4 // 45 deg
+                },
+                "#about": {
+                    camX: 0,  // center
+                    camZ: 3.5, // closer
+                    modY: -Math.PI / 6 // -30 deg
+                },
+                "#team": {
+                    camX: 3,  // right
+                    camZ: 4,  // mid
+                    modY: Math.PI / 8 // 22.5 deg
+                },
+                "#events": {
+                    camX: 0,  // center
+                    camZ: 3,  // closest
+                    modY: 0   // straight on
+                }
+            };
+
+            // --- 2. Helper function to animate to a state ---
+            function goToState(state) {
+                // Animate camera position
+                gsap.to(camera.position, {
+                    x: state.camX,
+                    z: state.camZ,
+                    duration: 1.5, // 1.5 second tween
+                    ease: "power3.inOut"
+                });
+                
+                // Animate model rotation
+                gsap.to(model.rotation, {
+                    y: state.modY,
+                    duration: 1.5,
+                    ease: "power3.inOut"
+                });
+            }
+
+            // --- 3. Create a ScrollTrigger for EACH section ---
+            // This is much cleaner than one giant timeline.
+            Object.keys(sectionStates).forEach(sectionClass => {
+                const state = sectionStates[sectionClass];
+                ScrollTrigger.create({
+                    trigger: sectionClass,
+                    start: "top 50%", // When the top of the section hits the middle of the screen
+                    end: "bottom 50%", // When the bottom of the section hits the middle of the screen
+                    
+                    // When you scroll *into* the section (top-down)
+                    onEnter: () => goToState(state), 
+                    
+                    // When you scroll *back into* the section (bottom-up)
+                    onEnterBack: () => goToState(state)
+                });
+            });
         }
 
         window.addEventListener('resize', onWindowResize, false);
