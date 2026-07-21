@@ -132,10 +132,28 @@ body::before {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
 .card-back {
   transform: rotateY(180deg);
-  background: linear-gradient(135deg, #4c1d95, #1e1b4b);
   border: 1px solid rgba(168, 159, 242, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Dark gradient overlay that sits on top of the photo */
+.card-back::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(97, 45, 176, 0.82), rgba(40, 37, 91, 0.88));
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* Make sure text content sits above the overlay */
+.card-back > * {
+  position: relative;
+  z-index: 1;
 }
 
 .eq-bar {
