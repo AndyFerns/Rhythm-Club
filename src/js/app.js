@@ -1,5 +1,5 @@
 // Import club data from data.js
-import { teamData, eventsData } from './data.js';
+import { teamData, eventsData, socialMedia } from './data.js';
 
 // Import Three.js and the GLTFLoader
 // This works because of the 'importmap' in index.html
@@ -10,6 +10,36 @@ import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
 // Wait for the DOM to be fully loaded before running any script
 document.addEventListener('DOMContentLoaded', () => {
+    // Typewriter effect for subtitle
+    const subtitle = document.querySelector('.hero p');
+    if (subtitle) {
+    const phrases = [
+        "The Musical Heartbeat of FCRIT",
+        "Where Rhythm Meets Passion",
+        "FCRIT's Music Community"
+    ];
+    let phraseIndex = 0, charIndex = 0, isDeleting = false;
+    
+    function type() {
+        const current = phrases[phraseIndex];
+        subtitle.textContent = isDeleting 
+        ? current.substring(0, charIndex--) 
+        : current.substring(0, charIndex++);
+        
+        if (!isDeleting && charIndex === current.length + 1) {
+        setTimeout(() => { isDeleting = true; type(); }, 2000);
+        return;
+        }
+        if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+        setTimeout(type, isDeleting ? 50 : 100);
+    }
+    
+    // Start after curtain delay
+    setTimeout(type, 2000);
+    }
 
     // ===================================================================
     //  WEBSITE LOGIC
@@ -70,11 +100,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const member = team[role.key];
             if (member) {
                 const memberHtml = `
-                  <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-purple-400/30">
-                    <img src="${escapeHTML(member.imageUrl) || 'https://placehold.co/400x400/5e4b8b/FFFFFF?text=?'}" alt="${escapeHTML(member.name)}" class="w-40 h-40 object-cover rounded-full mx-auto mb-4 border-4 border-white/20">
-                    <h3 class="text-xl font-bold text-center">${escapeHTML(member.name) || 'Position Open'}</h3>
-                    <p class="text-center text-purple-300">${escapeHTML(role.title)}</p>
-                  </div>
+                    <div class="member-card-wrapper">
+                    <div class="card-inner">
+                        <div class="card-front bg-white/5 backdrop-blur-sm p-6 rounded-2xl">
+                        <img src="${escapeHTML(member.imageUrl)}" 
+                            alt="${escapeHTML(member.name)}" 
+                            class="w-40 h-40 object-cover rounded-full mx-auto mb-4 border-4 border-purple-400/30">
+                        <h3 class="text-xl font-bold text-center">${escapeHTML(member.name)}</h3>
+                        <p class="text-center text-purple-300 text-sm mt-1">${escapeHTML(role.title)}</p>
+                        </div>
+                        <div class="card-back rounded-2xl flex flex-col items-center justify-center p-6">
+                        <div class="text-4xl mb-4">🎵</div>
+                        <h3 class="text-xl font-bold text-center">${escapeHTML(member.name)}</h3>
+                        <p class="text-purple-200 text-sm mt-2">${escapeHTML(role.title)}</p>
+                        ${member.instrument ? `<p class="text-gray-300 text-xs mt-3">🎸 ${escapeHTML(member.instrument)}</p>` : ''}
+                        ${member.year ? `<p class="text-gray-400 text-xs mt-1">Year ${escapeHTML(member.year)}</p>` : ''}
+                        </div>
+                    </div>
+                    </div>
                 `;
                 teamGrid.innerHTML += memberHtml;
             }
@@ -123,6 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderSocialMedia() {
+        document.getElementById("instagram-link").href =`https://instagram.com/${socialMedia.insta.url}`;
+        document.getElementById("whatsapp-link").href =`https://wa.me/${socialMedia.whatsapp.url}`;
+        document.getElementById("mail-link").href =`mailto:${socialMedia.email.url}`;
+    }
+
     // --- Modal Logic ---
     function openModal(data) {
         if (!eventModal) return;
@@ -166,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // The data is now coming from the import!
     renderTeam(teamData);
     renderEvents(eventsData);
+    renderSocialMedia();
     
     // --- GSAP Animations (from your script.js) ---
     gsap.registerPlugin(ScrollTrigger);
