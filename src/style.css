@@ -109,3 +109,55 @@ body::before {
 ::-webkit-scrollbar-thumb:hover {
     background: #c3bdf5;
 }
+
+/* In style.css */
+.member-card-wrapper {
+  perspective: 1000px;
+  height: 320px;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.member-card-wrapper:hover .card-inner {
+  transform: rotateY(180deg);
+}
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #4c1d95, #1e1b4b);
+  border: 1px solid rgba(168, 159, 242, 0.3);
+}
+
+.eq-bar {
+  width: 4px;
+  background: linear-gradient(to top, #7c3aed, #a78bfa);
+  border-radius: 2px;
+  animation: eq-bounce 1.2s ease-in-out infinite;
+}
+.eq-bar:nth-child(1)  { animation-delay: 0s;    height: 12px; }
+.eq-bar:nth-child(2)  { animation-delay: 0.1s;  height: 20px; }
+.eq-bar:nth-child(3)  { animation-delay: 0.2s;  height: 8px;  }
+.eq-bar:nth-child(4)  { animation-delay: 0.3s;  height: 28px; }
+.eq-bar:nth-child(5)  { animation-delay: 0.15s; height: 16px; }
+.eq-bar:nth-child(6)  { animation-delay: 0.05s; height: 24px; }
+.eq-bar:nth-child(7)  { animation-delay: 0.25s; height: 10px; }
+.eq-bar:nth-child(8)  { animation-delay: 0.35s; height: 22px; }
+.eq-bar:nth-child(9)  { animation-delay: 0.1s;  height: 18px; }
+.eq-bar:nth-child(10) { animation-delay: 0.2s;  height: 6px;  }
+.eq-bar:nth-child(11) { animation-delay: 0.3s;  height: 26px; }
+.eq-bar:nth-child(12) { animation-delay: 0.0s;  height: 14px; }
+
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(0.3); }
+  50%       { transform: scaleY(1);   }
+}
