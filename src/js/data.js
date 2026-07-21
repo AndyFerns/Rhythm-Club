@@ -3,69 +3,86 @@
 //  To update the website, just edit this file.
 // ===================================================================
 
-// 'export' allows this data to be imported by app.js
 export const teamData = {
     "president": { 
-        "name": "Shruti Shirdhankar", 
-        "imageUrl": "../images/Core Team/shruti.jpg" 
+        "name": "Rufus Ebeneezer", 
+        "imageUrl": "../../images/Core Team/rufus.jpeg" ,
+        "instrument": "guitar"
     },
     "vicePresident": { 
-        "name": "Vice President Name", 
-        "imageUrl": "../images/Core Team/vp.jpg"
+        "name": "Prarthana Nathar", 
+        "imageUrl": "../../images/Core Team/prarthana.jpeg",
+        "instrument": "singer"
     },
     "secretary": { 
-        "name": "Secretary Name", 
-        "imageUrl": "../images/Core Team/secretary.jpg"
+        "name": "Andrew Fernandes", 
+        "imageUrl": "../../images/Core Team/andrew.jpeg",
+        "instrument": "keyboard"
     },
     "operationsLead": { 
-        "name": "Operations Lead Name", 
-        "imageUrl": "../images/Core Team/operations.jpg"
+        "name": "Merin Rose George", 
+        "imageUrl": "../../images/Core Team/merin.jpeg"
     },
     "docHead": { 
-        "name": "Andrew Fernandes", 
-        "imageUrl": "../images/Core Team/doc.jpg"
+        "name": "Joshua Thomas", 
+        "imageUrl": "../../images/Core Team/joshT.jpeg"
     },
     "prHead1": { 
-        "name": "PR Head 1 Name", 
-        "imageUrl": "../images/Core Team/pr1.jpg"
+        "name": "Joshua Phillips", 
+        "imageUrl": "../../images/Core Team/joshP.jpeg"
     },
     "prHead2": { 
-        "name": "PR Head 2 Name", 
-        "imageUrl": "../images/Core Team/pr2.jpg"
+        "name": "Arya Vidhate", 
+        "imageUrl": "../../images/Core Team/arya.jpeg"
     },
     "eventCoordinator1": { 
-        "name": "Event Coordinator 1", 
-        "imageUrl": "../images/Core Team/ec1.jpg"
+        "name": "Emil Therese", 
+        "imageUrl": "../../images/Core Team/emil.jpeg"
     },
     "eventCoordinator2": { 
-        "name": "Event Coordinator 2", 
-        "imageUrl": "../images/Core Team/ec2.jpg"
+        "name": "Aiden Rodrigues", 
+        "imageUrl": "../../images/Core Team/aiden.jpeg"
     },
     "creativeLead": { 
-        "name": "Creative Lead Name", 
-        "imageUrl": "../images/Core Team/creative.jpg"
+        "name": "Samiksha Khandagale", 
+        "imageUrl": "../../images/Core Team/samiksha.jpeg"
     }
 };
 
 // export event data to be imported by app.js
 export const eventsData = [
     {
-        "title": "Battle of the Bands 2025",
-        "date": "October 15, 2025",
-        "description": "Our flagship event! FCRIT's finest bands compete for glory. This year featured 5 bands, 3 judges, and an electrifying guest performance from 'The Local Train'.\n\nThis is a great place for your event report, Doc Head!",
-        "imageUrl": "https://placehold.co/600x400/c7a3e6/0d1b4a?text=Battle+of+the+Bands"
+        "title": "Guitar Workshop 2026",
+        "date": "February 23, 2026",
+        "description": "A guitar workshop for new and intermediate guitarists alike, helping them sharpen their skills and teach all of the basics about guitar! Time to start developing those calluses and strum those strings",
+        "imageUrl": "../../images/events/Guitar workshop/gworkshop.jpeg"
     },
     {
-        "title": "Acoustic Night",
+        "title": "Independance Day",
         "date": "August 22, 2025",
-        "description": "A soulful evening under the stars. We transformed the college amphitheater into a cozy lounge with unplugged performances from singers and instrumentalists. A huge turnout and a magical vibe.",
-        "imageUrl": "https://placehold.co/600x400/a3e6d8/0d1b4a?text=Acoustic+Night"
+        "description": "A soulful performance filled with vibes of nationalism and love for one's country, beautifully performed by the members of the rhythm club",
+        "imageUrl": "../../images/events/independance day/independenceday2025.jpg"
     },
     {
-        "title": "Open Mic Session",
+        "title": "Fun Games with Rhythm",
         "date": "June 10, 2025",
         "description": "A casual event for anyone to showcase their talent. We had everything from beatboxing and guitar solos to poetry and stand-up comedy. Held in the college canteen during lunch break.",
-        "imageUrl": "https://placehold.co/600x400/e6a3a3/0d1b4a?text=Open+Mic"
+        "imageUrl": "../../images/events/Fun games with Rhythm/fgwr1.jpeg"
     }
     // Add new events here by copying the block above
 ];
+
+export const socialMedia = {
+    "email": {
+        "url": "music.fcrit@gmail.com",
+        "alt": "Email ID"
+    },
+    "insta" : {
+        "url": "rhythm_fcrit",
+        "alt": "Instagram ID"
+    },
+    whatsapp: {
+        url: "#", // Country code + number, no '+' or spaces
+        alt: "WhatsApp"
+    }
+};

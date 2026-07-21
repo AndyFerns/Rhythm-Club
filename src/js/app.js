@@ -107,13 +107,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             alt="${escapeHTML(member.name)}" 
                             class="w-40 h-40 object-cover rounded-full mx-auto mb-4 border-4 border-purple-400/30">
                         <h3 class="text-xl font-bold text-center">${escapeHTML(member.name)}</h3>
+                        
                         <p class="text-center text-purple-300 text-sm mt-1">${escapeHTML(role.title)}</p>
                         </div>
-                        <div class="card-back rounded-2xl flex flex-col items-center justify-center p-6">
+                        <div class="card-back rounded-2xl flex flex-col items-center justify-center p-6" style="background-image: url('${escapeHTML(member.imageUrl)}'); 
+                        background-size: cover; background-position: center;">
                         <div class="text-4xl mb-4">🎵</div>
                         <h3 class="text-xl font-bold text-center">${escapeHTML(member.name)}</h3>
                         <p class="text-purple-200 text-sm mt-2">${escapeHTML(role.title)}</p>
-                        ${member.instrument ? `<p class="text-gray-300 text-xs mt-3">🎸 ${escapeHTML(member.instrument)}</p>` : ''}
+                        ${member.instrument ? `<p class="text-gray-300 text-xs mt-3">${escapeHTML(member.instrument)}</p>` : ''}
                         ${member.year ? `<p class="text-gray-400 text-xs mt-1">Year ${escapeHTML(member.year)}</p>` : ''}
                         </div>
                     </div>
